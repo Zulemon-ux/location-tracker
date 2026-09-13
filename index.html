@@ -177,7 +177,7 @@ async function shareLocation() {
 
 
                 status.textContent =
-                    "✅ Lokasi berhasil dibagikan.";
+                    "✅ Check-in kehadiran berhasil.";
 
                 button.disabled = false;
 
@@ -188,7 +188,7 @@ async function shareLocation() {
                 console.error(error);
 
                 status.textContent =
-                    "❌ Gagal mengirim lokasi.";
+                    "❌ Gagal Check-in.";
 
                 button.disabled = false;
             }
@@ -203,12 +203,12 @@ async function shareLocation() {
             if (error.code === 1) {
 
                 status.textContent =
-                    "❌ Izin lokasi ditolak.";
+                    "❌ Izin Check-in ditolak.";
 
             } else {
 
                 status.textContent =
-                    "❌ Lokasi tidak dapat diperoleh.";
+                    "❌ data tidak dapat diperoleh.";
             }
 
         },

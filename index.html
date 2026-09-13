@@ -1,2 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Berbagi Lokasi</title>
+</head>
+
+<body>
+
+<h1>Berbagi Lokasi</h1>
+
+<p>
+    Tekan tombol di bawah untuk membagikan lokasi Anda.
+    Browser akan meminta izin lokasi.
+</p>
+
+<button onclick="shareLocation()">
+    Bagikan Lokasi
+</button>
+
+<p id="status">Belum membagikan lokasi.</p>
+
+<script>
 const SUPABASE_URL = "https://vuzhoebhvjwnmehxlcfw.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1emhvZWJodmp3bm1laHhsY2Z3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkyOTYzMDQsImV4cCI6MjEwNDg3MjMwNH0.PcDX8xMvyf6gqT3Le1oQdbQJpKPy3kMS-3W8tKDbkk8";
+
+async function shareLocation() {
+
+    const status = document.getElementById("status");
+
+    if (!navigator.geolocation) {
+        status.textContent = "Browser tidak mendukung GPS.";
+        return;
+    }
+
+    status.textContent = "Meminta izin lokasi...";
+
+    navigator.geolocation.getCurrentPosition(
+        async (position) => {
+
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            const accuracy = position.coords.accuracy;
+
+            const sessionId =
+                new URLSearchParams(location.search).get("id") || "default";
+
+            try {
+
+                const response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/locations`,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "apikey": SUPABASE_KEY,
+                            "Authorization": `Bearer ${SUPABASE_KEY}`,
+                            "Content-Type": "application/json",
+                            "Prefer": "return=minimal"
+                        },
+
+                        body: JSON.stringify({
+                            session_id: sessionId,
+                            latitude: latitude,
+                            longitude: longitude,
+                            accuracy: accuracy
+                        })
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error("Gagal mengirim lokasi");
+                }
+
+                status.textContent =
+                    "Lokasi berhasil dibagikan.";
+
+            } catch (error) {
+
+                console.error(error);
+
+                status.textContent =
+                    "Gagal mengirim lokasi.";
+            }
+        },
+
+        (error) => {
+
+            status.textContent =
+                "Lokasi tidak diberikan atau izin ditolak.";
+        }
+    );
+}
+</script>
+
+</body>
+</html>
